@@ -1,6 +1,12 @@
 # registrum-mcp-examples
 
-Example prompts and scripts for the [Registrum MCP server](https://github.com/vdmeu/registrum-mcp) -- an [MCP](https://modelcontextprotocol.io) server that gives Claude, Cursor, and any other MCP-compatible agent live access to enriched UK Companies House data: company profiles, structured financials, directors, PSC/beneficial ownership, and director networks.
+[![npm](https://img.shields.io/npm/v/%40registrum%2Fmcp?label=%40registrum%2Fmcp)](https://www.npmjs.com/package/@registrum/mcp)
+[![API status](https://uptime.betterstack.com/status-badges/v1/monitor/4158135.svg)](https://status.registrum.co.uk)
+[![Licence](https://img.shields.io/badge/licence-MIT-green)](LICENSE)
+
+Example prompts and scripts for the [Registrum MCP server](https://github.com/vdmeu/registrum-mcp) -- an [MCP](https://modelcontextprotocol.io) server that gives Claude, Cursor, and any other MCP-compatible agent live access to enriched UK Companies House data: company profiles, structured financials, directors, ECCTA identity-verification status, PSC/beneficial ownership, and director networks.
+
+**8 tools:** `search_company`, `get_company`, `get_financials`, `get_directors`, `get_compliance`, `get_psc`, `get_psc_chain`, `get_network`. Run [`list-tools.mjs`](examples/list-tools.mjs) for the authoritative, live list -- this README is checked against the running server, but the server is the source of truth.
 
 This repo has two parts:
 
@@ -44,7 +50,10 @@ Real prompts, and which tools the agent calls to answer them.
 → `get_network` with `depth: 2` (requires a Pro/Enterprise key -- Free/Web get a 403 with an upgrade link).
 
 **"Is company 09876543 a shell? Check ownership, financials, and whether it shares directors with anything else."**
-→ Chains all five tools: `get_company`, `get_psc_chain`, `get_financials`, `get_directors`, `get_network`.
+→ Chains five tools: `get_company`, `get_psc_chain`, `get_financials`, `get_directors`, `get_network`.
+
+**"Which of these 20 companies has anyone who hasn't verified their identity with Companies House yet?"**
+→ `get_compliance` per company. From **18 November 2026**, ECCTA requires every UK director and PSC to verify their identity, and unverified officers can block filings. Ask the agent to separate `overdue` from `pending` -- see the gotcha below, because conflating them is the standard mistake here. Requires a Pro key.
 
 ## Scripts
 
@@ -58,6 +67,7 @@ node examples/list-tools.mjs
 node examples/beneficial-ownership-check.mjs "Tesco PLC"
 node examples/director-network-map.mjs 00445790 --depth=2
 node examples/financial-screening.mjs 00445790 12345678
+node examples/eccta-compliance-check.mjs 00445790 03824658
 ```
 
 | Script | Use case |
@@ -66,6 +76,7 @@ node examples/financial-screening.mjs 00445790 12345678
 | [`beneficial-ownership-check.mjs`](examples/beneficial-ownership-check.mjs) | KYB/AML: resolve a name, then walk the PSC chain to find UBOs |
 | [`director-network-map.mjs`](examples/director-network-map.mjs) | Corporate group / related-party discovery via shared directors |
 | [`financial-screening.mjs`](examples/financial-screening.mjs) | Batch financial screening across a list of companies |
+| [`eccta-compliance-check.mjs`](examples/eccta-compliance-check.mjs) | ECCTA: portfolio identity-verification status, overdue separated from pending |
 
 ## Gotchas these scripts handle
 
@@ -89,13 +100,23 @@ Free and Web-tier keys get a 403 on `depth: 2` -- `depth: 1` (direct connections
 
 `profit_and_loss.turnover` (and every other P&L / balance sheet field) is `{ current, prior }` -- the two most recently filed years -- or `null` if that line wasn't present in the filing. `field.toLocaleString()` will throw; `field.current.toLocaleString()` is what you want. See `fmt()` in [`financial-screening.mjs`](examples/financial-screening.mjs).
 
-### 6. Every tool result is wrapped in the API's response envelope
+### 6. `pending` is not `overdue` on `get_compliance`
+
+ECCTA identity verification is not a boolean. `pending` means a person's deadline **has not
+passed yet** -- a normal state during the transition to 18 Nov 2026, and not a failure.
+`overdue` means a deadline was actually missed. They are returned as separate counters
+precisely so you don't have to guess, and collapsing them into one "unverified" flag will
+overstate risk across most of the register. `verification_rate` counts only genuinely verified
+people, so it is deliberately low right now and that is not a data error. See
+[`eccta-compliance-check.mjs`](examples/eccta-compliance-check.mjs).
+
+### 7. Every tool result is wrapped in the API's response envelope
 
 The underlying REST API wraps every payload in `{ status, data, cached, cache_age_seconds, data_source }`, and the MCP tools pass that envelope straight through as the tool's text content -- it isn't unwrapped for you. `_client.mjs`'s `call()` does `JSON.parse(...).data` so every other script gets the plain payload.
 
 ## Building this without the MCP server
 
-Registrum is a normal REST API under the hood -- the MCP server is a thin wrapper. If you'd rather call `api.registrum.co.uk` directly from Python or Node without an agent in the loop, see [companies-house-api-python-starter](https://github.com/vdmeu/companies-house-api-python-starter) and [companies-house-api-node-starter](https://github.com/vdmeu/companies-house-api-node-starter) -- or hit the raw, free [Companies House API](https://developer.company-information.service.gov.uk) directly and handle auth, rate limits, and iXBRL parsing yourself.
+Registrum is a normal REST API under the hood -- the MCP server is a thin wrapper. If you'd rather call `api.registrum.co.uk` directly from Python or Node without an agent in the loop, see [companies-house-api-python-starter](https://github.com/RegistrumUK/companies-house-api-python-starter) and [companies-house-api-node-starter](https://github.com/RegistrumUK/companies-house-api-node-starter) -- or hit the raw, free [Companies House API](https://developer.company-information.service.gov.uk) directly and handle auth, rate limits, and iXBRL parsing yourself.
 
 ## License
 
