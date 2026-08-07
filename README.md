@@ -15,7 +15,31 @@ This repo has two parts:
 
 ## Set up the server first
 
-This repo doesn't run standalone -- it connects to the actual MCP server. Add it to your client's config:
+This repo doesn't run standalone -- it connects to the actual MCP server. The
+hosted endpoint needs no account, no API key and no install:
+
+```json
+{
+  "mcpServers": {
+    "registrum": {
+      "url": "https://registrum.co.uk/api/mcp"
+    }
+  }
+}
+```
+
+Claude Desktop: `~/.claude/claude_desktop_config.json`. Cursor: `.cursor/mcp.json`.
+
+Every tool below works on that endpoint. The anonymous tier is generous on the
+everyday tools and deliberately small on the expensive ones -- a couple of
+ownership-chain traces and financial statements a day. When you hit a cap the
+tool says so and points at a free key; nothing silently degrades.
+
+<details>
+<summary>Running it locally with your own key instead</summary>
+
+Use this when you want the anonymous caps lifted, or would rather run the
+server on your own machine:
 
 ```json
 {
@@ -29,9 +53,10 @@ This repo doesn't run standalone -- it connects to the actual MCP server. Add it
 }
 ```
 
-Claude Desktop: `~/.claude/claude_desktop_config.json`. Cursor: `.cursor/mcp.json`. Full instructions: [registrum-mcp](https://github.com/vdmeu/registrum-mcp).
+Free key, no credit card: [registrum.co.uk](https://registrum.co.uk/?utm_source=github&utm_campaign=examples).
+Full instructions: [registrum-mcp](https://github.com/vdmeu/registrum-mcp).
 
-Free API key, no credit card: [registrum.co.uk](https://registrum.co.uk) -- 50 calls/month.
+</details>
 
 ## Prompt cookbook
 
