@@ -10,7 +10,7 @@
     "financial-screening": "node examples/financial-screening.mjs"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.27.1"
+    "@modelcontextprotocol/sdk": "^1.30.0"
   },
   "engines": {
     "node": ">=18"
