@@ -1,7 +1,7 @@
 // Corporate group / related-party discovery: find every company that
 // shares a current director with the target company.
 //
-//   REGISTRUM_API_KEY=reg_live_... node examples/director-network-map.mjs 00445790 --depth=2
+//   node examples/director-network-map.mjs 00445790 --depth=2
 import { connect } from "./_client.mjs";
 
 const companyNumber = process.argv[2];

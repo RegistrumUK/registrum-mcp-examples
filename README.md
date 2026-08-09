@@ -82,11 +82,10 @@ Real prompts, and which tools the agent calls to answer them.
 
 ## Scripts
 
-Each one is a standalone, no-build Node script using the [MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk)'s `Client` over stdio -- useful if you're wiring Registrum into your own agent instead of a chat client.
+Each one is a standalone, no-build Node script using the [MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk)'s `Client` over streamable HTTP, against the same hosted, keyless endpoint above -- useful if you're wiring Registrum into your own agent instead of a chat client.
 
 ```bash
 npm install
-export REGISTRUM_API_KEY=reg_live_...
 
 node examples/list-tools.mjs
 node examples/beneficial-ownership-check.mjs "Tesco PLC"

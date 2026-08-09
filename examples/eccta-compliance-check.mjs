@@ -1,9 +1,10 @@
 // ECCTA use case: check identity-verification state across a portfolio of
 // companies ahead of the 18 November 2026 enforcement date.
 //
-//   REGISTRUM_API_KEY=reg_live_... node examples/eccta-compliance-check.mjs 00445790 03824658
+//   node examples/eccta-compliance-check.mjs 00445790 03824658
 //
-// Requires a Pro plan or above (get_compliance is plan-gated).
+// get_compliance is Pro-plan-gated on a personal API key; the hosted anonymous
+// endpoint's shared demo key clears that gate, subject to its own daily cap.
 import { connect } from "./_client.mjs";
 
 const companyNumbers = process.argv.slice(2);

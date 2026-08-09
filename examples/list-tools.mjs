@@ -1,7 +1,7 @@
 // The "hello world" of driving an MCP server programmatically instead of
-// through a chat client: connect over stdio, list what it exposes.
+// through a chat client: connect to the hosted endpoint, list what it exposes.
 //
-//   REGISTRUM_API_KEY=reg_live_... node examples/list-tools.mjs
+//   node examples/list-tools.mjs
 import { connect } from "./_client.mjs";
 
 const { client, close } = await connect();

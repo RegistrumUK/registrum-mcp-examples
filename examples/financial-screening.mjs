@@ -2,7 +2,7 @@
 // numbers and print a one-line summary each, flagging companies whose
 // accounts didn't yield structured data (PDF-only filings, dormant, etc).
 //
-//   REGISTRUM_API_KEY=reg_live_... node examples/financial-screening.mjs 00445790 00445790 12345678
+//   node examples/financial-screening.mjs 00445790 00445790 12345678
 import { connect } from "./_client.mjs";
 
 const companyNumbers = process.argv.slice(2);

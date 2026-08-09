@@ -1,22 +1,13 @@
-// Shared helper: connect to the Registrum MCP server over stdio and
-// return a ready client plus a `call()` that parses the JSON text content
-// MCP tools return (they don't return native JSON -- see README gotcha #1).
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+// Shared helper: connect to the hosted, keyless Registrum MCP endpoint over
+// streamable HTTP and return a ready client plus a `call()` that parses the
+// JSON text content MCP tools return (they don't return native JSON -- see
+// README gotcha #1).
+import { Client, StreamableHTTPClientTransport } from "@modelcontextprotocol/client";
+
+const HOSTED_URL = "https://registrum.co.uk/api/mcp";
 
 export async function connect() {
-  const apiKey = process.env.REGISTRUM_API_KEY;
-  if (!apiKey) {
-    throw new Error(
-      "Set REGISTRUM_API_KEY first. Free key, no credit card: https://registrum.co.uk"
-    );
-  }
-
-  const transport = new StdioClientTransport({
-    command: "npx",
-    args: ["-y", "@registrum/mcp"],
-    env: { ...process.env, REGISTRUM_API_KEY: apiKey },
-  });
+  const transport = new StreamableHTTPClientTransport(new URL(HOSTED_URL));
 
   const client = new Client({ name: "registrum-mcp-examples", version: "1.0.0" });
   await client.connect(transport);

@@ -2,7 +2,7 @@
 // walk the PSC chain to find who ultimately controls it -- natural
 // persons, foreign entities, or a reason the chain terminated early.
 //
-//   REGISTRUM_API_KEY=reg_live_... node examples/beneficial-ownership-check.mjs "Tesco PLC"
+//   node examples/beneficial-ownership-check.mjs "Tesco PLC"
 import { connect } from "./_client.mjs";
 
 const companyName = process.argv[2];
