@@ -6,7 +6,7 @@
 
 Example prompts and scripts for the [Registrum MCP server](https://github.com/vdmeu/registrum-mcp) -- an [MCP](https://modelcontextprotocol.io) server that gives Claude, Cursor, and any other MCP-compatible agent live access to enriched UK Companies House data: company profiles, structured financials, directors, ECCTA identity-verification status, PSC/beneficial ownership, and director networks.
 
-**8 tools:** `search_company`, `get_company`, `get_financials`, `get_directors`, `get_compliance`, `get_psc`, `get_psc_chain`, `get_network`. Run [`list-tools.mjs`](examples/list-tools.mjs) for the authoritative, live list -- this README is checked against the running server, but the server is the source of truth.
+**9 tools:** `search_company`, `get_bundle`, `get_company`, `get_financials`, `get_directors`, `get_compliance`, `get_psc`, `get_psc_chain`, `get_network`. Run [`list-tools.mjs`](examples/list-tools.mjs) for the authoritative, live list -- this README is checked against the running server, but the server is the source of truth.
 
 This repo has two parts:
 
@@ -74,8 +74,11 @@ Real prompts, and which tools the agent calls to answer them.
 **"Map the corporate group around Barratt Developments two levels deep."**
 → `get_network` with `depth: 2` (requires a Pro/Enterprise key -- Free/Web get a 403 with an upgrade link).
 
+**"Tell me everything about company 09876543."**
+→ `get_bundle`, which returns the profile, ECCTA compliance, financials, PSCs and directors in one call for one credit, instead of four separate ones. Pass `include` for a subset. Sections that are unavailable come back `null` rather than failing the call, so ask the agent to report a null section as "not available" rather than as an absence of the fact.
+
 **"Is company 09876543 a shell? Check ownership, financials, and whether it shares directors with anything else."**
-→ Chains five tools: `get_company`, `get_psc_chain`, `get_financials`, `get_directors`, `get_network`.
+→ `get_bundle` covers ownership, financials and directors in one call; then `get_psc_chain` to trace corporate PSCs to real people, and `get_network` for shared directorships. Two calls where this used to take five.
 
 **"Which of these 20 companies has anyone who hasn't verified their identity with Companies House yet?"**
 → `get_compliance` per company. From **18 November 2026**, ECCTA requires every UK director and PSC to verify their identity, and unverified officers can block filings. Ask the agent to separate `overdue` from `pending` -- see the gotcha below, because conflating them is the standard mistake here. Requires a Pro key.
