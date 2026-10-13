@@ -4,7 +4,7 @@
 [![API status](https://uptime.betterstack.com/status-badges/v1/monitor/4158135.svg)](https://status.registrum.co.uk)
 [![Licence](https://img.shields.io/badge/licence-MIT-green)](LICENSE)
 
-Example prompts and scripts for the [Registrum MCP server](https://github.com/vdmeu/registrum-mcp) -- an [MCP](https://modelcontextprotocol.io) server that gives Claude, Cursor, and any other MCP-compatible agent live access to enriched UK Companies House data: company profiles, structured financials, directors, ECCTA identity-verification status, PSC/beneficial ownership, and director networks.
+Example prompts and scripts for the [Registrum MCP server](https://github.com/RegistrumUK/uk-companies-house-mcp) -- an [MCP](https://modelcontextprotocol.io) server that gives Claude, Cursor, and any other MCP-compatible agent live access to enriched UK Companies House data: company profiles, structured financials, directors, ECCTA identity-verification status, PSC/beneficial ownership, and director networks.
 
 **9 tools:** `search_company`, `get_bundle`, `get_company`, `get_financials`, `get_directors`, `get_compliance`, `get_psc`, `get_psc_chain`, `get_network`. Run [`list-tools.mjs`](examples/list-tools.mjs) for the authoritative, live list -- this README is checked against the running server, but the server is the source of truth.
 
@@ -54,7 +54,7 @@ server on your own machine:
 ```
 
 Free key, no credit card: [registrum.co.uk](https://registrum.co.uk/?utm_source=github&utm_campaign=examples).
-Full instructions: [registrum-mcp](https://github.com/vdmeu/registrum-mcp).
+Full instructions: [registrum-mcp](https://github.com/RegistrumUK/uk-companies-house-mcp).
 
 </details>
 
